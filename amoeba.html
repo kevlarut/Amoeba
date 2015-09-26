@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style type="text/css">
+    	body {
+    		background: #333;
+    	}
+    	canvas {
+    		background: #fff;
+    	}
+    </style>
+    <script type="text/javascript">
+    
+    	var randomNumberBetweenMinAndMaxToThreeDecimalPlaces = function(min, max) {
+			return (Math.floor(Math.random() * 1000 * (max - min)) + 1000 * min) / 1000;
+    	}
+    
+    	var gameLoop = function() {
+    		canvas = document.getElementById('game');	
+			context = canvas.getContext('2d');
+			
+			context.clearRect(0, 0, canvas.width, canvas.height);
+		
+			var centerX = 200;
+			var centerY = 200;
+			var radius = 100;
+			
+			var firstX = null
+			var firstY = null;
+			var lastX = null;
+			var lastY = null;
+			var lastControlPointX = null;
+			var lastControlPointY = null;
+			var points = 15;
+			for (var i = 0; i <= points; i++) {
+				
+				if (i == points) {
+					x = firstX;
+					y = firstY;
+				}
+				else {
+					var min = (1 / points) * i;
+					var max = (1 / points) * (i + 1);
+					var rando = randomNumberBetweenMinAndMaxToThreeDecimalPlaces(min, max);
+					var angle = rando * Math.PI * 2;
+					x = Math.cos(angle)*radius;
+					y = Math.sin(angle)*radius;
+					
+					var randomBezierReferenceMagnitude = randomNumberBetweenMinAndMaxToThreeDecimalPlaces(0.25, 0.5);
+					var randomBezierReference = randomBezierReferenceMagnitude;
+					if (Math.random() >= 0.5) {
+						randomBezierReference *= -1;
+					}
+					
+					controlPointX = Math.cos(angle) * radius * (1 + randomBezierReference);
+					controlPointY = Math.sin(angle) * radius * (1 + randomBezierReference);
+					
+					invertedControlPointX = Math.cos(angle) * radius * (1 - randomBezierReference);
+					invertedControlPointY = Math.sin(angle) * radius * (1 - randomBezierReference);
+				}
+			
+				if (lastX != null && lastY != null) {
+				/*
+					context.fillStyle = 'red';
+					context.fillRect(lastX + centerX - 2, lastY + centerY - 2,5,5);
+					
+					context.fillStyle = 'blue';
+					context.fillRect(controlPointX + centerX - 2, controlPointY + centerY - 2,5,5);
+					
+					context.fillStyle = 'green';
+					context.fillRect(lastControlPointX + centerX - 2, lastControlPointY + centerY - 2,5,5);
+				*/
+					context.fillStyle = 'black';
+					context.beginPath();
+					context.moveTo(lastX + centerX, lastY + centerY);
+				
+					//context.lineTo(x + centerX, y + centerY);
+					
+					context.bezierCurveTo(
+						lastControlPointX + centerX, lastControlPointY + centerY, 
+						controlPointX + centerX, controlPointY + centerY, 
+						x + centerX, y + centerY);
+					
+					context.stroke();
+				}
+				lastX = x;
+				lastY = y;
+				lastControlPointX = invertedControlPointX;
+				lastControlPointY = invertedControlPointY;
+				if (i == 0) {
+					firstX = x;
+					firstY = y;
+				}
+			}
+    	}
+    	
+    	window.onload = function() {
+    	
+    		var frameRate = 5;
+			var gameLoopInterval = setInterval(gameLoop, 1000 / frameRate);	
+			gameLoop();
+    	
+    		
+		}
+    </script>
+</head>
+<body>
+
+	<canvas id="game" width="640" height="480">
+		<h1>Sorry, this browser does not have support for needed canvas / HTML5</h1>
+	</canvas>
+
+</body>
+</html>
