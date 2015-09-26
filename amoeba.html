@@ -33,6 +33,7 @@
 			var lastControlPointX = null;
 			var lastControlPointY = null;
 			var points = 15;
+			context.beginPath();
 			for (var i = 0; i <= points; i++) {
 				
 				if (i == points) {
@@ -61,28 +62,10 @@
 				}
 			
 				if (lastX != null && lastY != null) {
-				/*
-					context.fillStyle = 'red';
-					context.fillRect(lastX + centerX - 2, lastY + centerY - 2,5,5);
-					
-					context.fillStyle = 'blue';
-					context.fillRect(controlPointX + centerX - 2, controlPointY + centerY - 2,5,5);
-					
-					context.fillStyle = 'green';
-					context.fillRect(lastControlPointX + centerX - 2, lastControlPointY + centerY - 2,5,5);
-				*/
-					context.fillStyle = 'black';
-					context.beginPath();
-					context.moveTo(lastX + centerX, lastY + centerY);
-				
-					//context.lineTo(x + centerX, y + centerY);
-					
 					context.bezierCurveTo(
 						lastControlPointX + centerX, lastControlPointY + centerY, 
 						controlPointX + centerX, controlPointY + centerY, 
 						x + centerX, y + centerY);
-					
-					context.stroke();
 				}
 				lastX = x;
 				lastY = y;
@@ -93,6 +76,14 @@
 					firstY = y;
 				}
 			}
+			context.closePath();
+			
+			context.fillStyle = '#f66';
+			context.strokeStyle = '#f00';
+			context.lineWidth = 5;
+			context.fill();
+			context.stroke();
+			
     	}
     	
     	window.onload = function() {
